@@ -15,7 +15,7 @@ try {
     const winsdk = core.getInput('winsdk') || ''
     const vswhere = core.getInput('vswhere') || 'vswhere.exe'
     const components = core.getInput('components') || 'Microsoft.VisualStudio.Component.VC.Tools.x86.x64'
-    const verbose = core.getInput('verbose') || false
+    const verbose = core.getInput('verbose') || true
 
     const vsInstallerPath = path.win32.join(process.env['ProgramFiles(x86)'], 'Microsoft Visual Studio', 'Installer')
     const vswherePath = path.win32.resolve(vsInstallerPath, vswhere)
@@ -67,12 +67,14 @@ try {
         vsDevCmdArgs.push(`-vcvars_ver=${toolsetVersion}`)
     if (winsdk != '')
         vsDevCmdArgs.push(`-winsdk=${winsdk}`)
-    
+
     const cmdArgs = [ '/q', '/k'].concat(vsDevCmdArgs, ['&&', 'set'])
 
     console.log(`$ cmd ${cmdArgs.join(' ')}`)
 
     const cmdResult = spawn('cmd', cmdArgs, {encoding: 'utf8'})
+    console.log(`$ cmd result ${cmdResult}`)
+
     if (cmdResult.error) throw cmdResult.error
     const cmdOutput = cmdResult.output
         .filter(s => !!s)
@@ -94,6 +96,7 @@ try {
     for (const [key, value] of newEnvVars) {
         core.exportVariable(key, value)
     }
+    console.log(`$ new path ${newPath}`)
     core.exportVariable('Path', newPath);
 
     console.log('environment updated')
