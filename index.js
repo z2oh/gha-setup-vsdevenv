@@ -20,7 +20,7 @@ try {
     const vsInstallerPath = path.win32.join(process.env['ProgramFiles(x86)'], 'Microsoft Visual Studio', 'Installer')
     const vswherePath = path.win32.resolve(vsInstallerPath, vswhere)
 
-    console.log(`vswhere: ${vswherePath}`)
+    core.info(`vswhere: ${vswherePath}`)
 
     const requiresArg = components
         .split(';')
@@ -35,7 +35,7 @@ try {
         '-property', 'installationPath',
     ].concat(requiresArg)
 
-    console.log(`$ ${vswherePath} ${vswhereArgs.join(' ')}`)
+    core.info(`$ ${vswherePath} ${vswhereArgs.join(' ')}`)
 
     const vswhereResult = spawn(vswherePath, vswhereArgs, {encoding: 'utf8'})
     if (vswhereResult.error) throw vswhereResult.error
@@ -54,11 +54,11 @@ try {
     if (installPathList.length == 0) throw new Error('Could not find compatible VS installation')
 
     const installPath = installPathList[installPathList.length - 1]
-    console.log(`install: ${installPath}`)
+    core.info(`install: ${installPath}`)
     core.setOutput('install_path', installPath)
 
     const vsDevCmdPath = path.win32.join(installPath, 'Common7', 'Tools', 'vsdevcmd.bat')
-    console.log(`vsdevcmd: ${vsDevCmdPath}`)
+    core.info(`vsdevcmd: ${vsDevCmdPath}`)
 
     const vsDevCmdArgs = [ vsDevCmdPath, `-arch=${arch}` ]
     if (hostArch != '')
@@ -70,10 +70,10 @@ try {
 
     const cmdArgs = [ '/q', '/k'].concat(vsDevCmdArgs, ['&&', 'set'])
 
-    console.log(`$ cmd ${cmdArgs.join(' ')}`)
+    core.info(`$ cmd ${cmdArgs.join(' ')}`)
 
     const cmdResult = spawn('cmd', cmdArgs, {encoding: 'utf8'})
-    console.log(`$ cmd result ${cmdResult}`)
+    core.info(`$ cmd result ${cmdResult}`)
 
     if (cmdResult.error) throw cmdResult.error
     const cmdOutput = cmdResult.output
@@ -96,10 +96,10 @@ try {
     for (const [key, value] of newEnvVars) {
         core.exportVariable(key, value)
     }
-    console.log(`$ new path ${newPath}`)
+    core.info(`$ new path ${newPath}`)
     core.exportVariable('Path', newPath);
 
-    console.log('environment updated')
+    core.info('environment updated')
 } catch (error) {
     core.setFailed(error.message);
 }
