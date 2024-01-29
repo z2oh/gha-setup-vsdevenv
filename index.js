@@ -15,7 +15,7 @@ try {
     const winsdk = core.getInput('winsdk') || ''
     const vswhere = core.getInput('vswhere') || 'vswhere.exe'
     const components = core.getInput('components') || 'Microsoft.VisualStudio.Component.VC.Tools.x86.x64'
-    const verbose = core.getInput('verbose') || true
+    const verbose = core.getInput('verbose') || false
 
     const vsInstallerPath = path.win32.join(process.env['ProgramFiles(x86)'], 'Microsoft Visual Studio', 'Installer')
     const vswherePath = path.win32.resolve(vsInstallerPath, vswhere)
@@ -97,6 +97,8 @@ try {
         core.exportVariable(key, value)
     }
     core.info(`$ new path ${newPath}`)
+    core.info("jjj: test")
+    core.info("" + newPath)
     core.exportVariable('Path', newPath);
 
     core.info('environment updated')
